@@ -72,7 +72,7 @@ refining the graph to make the most effective visualization possible.
 p <- ggplot(data = gapminder,
             mapping = aes(x = gdpPercap,
                           y = lifeExp)) + geom_point()
-p
+show(p)
 ```
 
 ![](intro_to_ggplot_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
