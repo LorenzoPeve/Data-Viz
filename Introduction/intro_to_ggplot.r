@@ -1,10 +1,6 @@
-library(ggplot2)
+library(gapminder)
 
-
-ggplot(
-  data = temperatures,
-  mapping = aes(x = day_of_year, y = temperature, color = location)
-) + geom_line()
+gapminder
 
 
 
