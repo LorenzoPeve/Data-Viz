@@ -1,5 +1,6 @@
 ---
 title: "Project 1"
+output=github_document
 ---
 
 ```{r global_options, include=FALSE}
