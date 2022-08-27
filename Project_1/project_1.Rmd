@@ -1,0 +1,34 @@
+---
+title: "Project 1"
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+library(ggplot2)
+opts_chunk$set(fig.align="center", fig.height=4, fig.width=5.5)
+```
+
+**This project is due on the deadline posted on edX. Please submit a .pdf file of your output and upload a .zip file containing your .Rmd file. Do NOT include your name or EID in your filenames.**
+
+
+**Part 1:** Demonstrate basic command of Markdown by creating a bulleted list with three items, a numbered list with three items, and a sentence that has one word in bold and one word in italics.
+
+*Your text goes here.*
+
+**Part 2:** The `mtcars` dataset contains information on car design and performance in 1974:
+
+```{r}
+mtcars
+```
+
+Use ggplot to make a line plot of the fuel economy of a car, measured in miles/gallon (column `mpg`), versus its weight (column `wt`).
+
+```{r}
+# your code goes here
+```
+
+Now make a scatter plot (using `geom_point()`) of the horse power of a car (`hp`) versus its weight, and color points by its fuel economy.
+
+```{r}
+# your code goes here
+```
