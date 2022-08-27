@@ -1,0 +1,19 @@
+---
+title: "Intro to ggplot"
+output: github_document
+---
+
+# Load Libraries
+```{r}
+library(knitr)
+library(ggplot2)
+library(gapminder)
+```
+
+# View at *gapminder* data
+
+```{r}
+gapminder
+```
+
+

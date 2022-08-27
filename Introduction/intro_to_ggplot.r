@@ -1,7 +1,0 @@
-library(gapminder)
-
-gapminder
-
-
-
-
