@@ -1,19 +1,163 @@
 ---
 title: "Intro to ggplot"
-output: github_document
+author: "By Lorenzo Peve"
+output:
+  github_document:
+    toc: true
+
 ---
 
-# Load Libraries
+## 1.0 Load Libraries
+```{r include=FALSE}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
+```
+
 ```{r}
 library(knitr)
 library(ggplot2)
 library(gapminder)
+library(ggthemes)
 ```
 
-# View at *gapminder* data
+## 2.0 View at *gapminder* data
 
 ```{r}
 gapminder
 ```
 
+## 3.0 Plotting Data
 
+Different plots are going to be created. I'll start with the most basic plot and
+then be be gradually increasing the number of components and refining the graph
+to make the most effective visualization possible.
+
+### 3.1 Most basic plot
+```{r}
+p <- ggplot(data = gapminder,
+            mapping = aes(x = gdpPercap,
+                          y = lifeExp)) + geom_point()
+p
+```
+
+### 3.2 Adding color
+```{r}
+p <- ggplot(data = gapminder,
+            mapping = aes(x = gdpPercap,
+                          y = lifeExp, color = continent)) + geom_point()
+p
+```
+
+### 3.3 Smoothing
+`geom_smooth()` has calculated a smoothed line and added a shaded ribbon showing
+the standard error for the line.
+```{r}
+p <- ggplot(data = gapminder,
+            mapping = aes(x = gdpPercap,
+                          y=lifeExp))
+p + geom_smooth()
+```
+
+### 3.4 Smoothing with points 
+The order of the layers matter. We want points below the smoothing, so they go
+first.
+```{r}
+p + geom_point(color = '#006600') + geom_smooth()
+```
+
+### 3.5 Transforming x-axes.
+
+GDP is not normally distributed across the country years. The x-axis scale would
+probably look better if it were transformed from a linear scale to a log scale. 
+
+```{r}
+p <- ggplot(data = gapminder,
+            mapping = aes(x = gdpPercap,
+                          y=lifeExp))
+p + geom_point() +
+    geom_smooth(method = "lm") +
+    scale_x_log10()
+```
+
+### 3.6 Styling Axes
+
+GDP is not normally distributed across the country years. The x-axis scale would
+probably look better if it were transformed from a linear scale to a log scale. 
+
+```{r}
+p <- ggplot(data = gapminder,
+            mapping = aes(x = gdpPercap,
+                          y=lifeExp))
+p + geom_point(color = 'firebrick') +
+    geom_smooth(method = "lm") +
+    scale_x_log10(name = 'GDP (U$D)', 
+                  labels = scales::dollar, 
+                  breaks = waiver(),
+                  minor_breaks= waiver()) + 
+    scale_y_continuous(name = 'Life Expectancy',
+                       limits = c(25, 90),
+                       n.breaks = 6) +
+    theme_tufte()
+```
+
+### 3.7 A more stylish plot of Life Expectancy vs GDP
+
+```{r}
+p <- ggplot(data = gapminder, mapping = aes(x = gdpPercap, y=lifeExp))
+p + geom_point(alpha = 0.3) +
+    geom_smooth(method = "lm") +
+    scale_x_log10(labels = scales::dollar) +
+    labs(x = "GDP Per Capita", y = "Life Expectancy in Years",
+         title = "Economic Growth and Life Expectancy",
+         subtitle = "Data points are country-years",
+         caption = "Source: Gapminder.")
+```
+
+### 3.8 Mapping the continent variable
+
+```{r}
+p <- ggplot(data = gapminder, 
+            mapping = aes(x = gdpPercap, 
+                          y=lifeExp, 
+                          color = continent,
+                          fill = continent))
+p + geom_point(alpha = 0.4) +
+    geom_smooth() +
+    scale_x_log10(labels = scales::dollar) +
+    labs(x = "GDP Per Capita", y = "Life Expectancy in Years",
+         title = "Economic Growth and Life Expectancy",
+         subtitle = "Data points are country-years",
+         caption = "Source: Gapminder.")
+```
+
+### 3.9 Mapping Aestheticsper geom
+
+Five separate smoothers is too many but we still want to show the smoothed line.
+By default, **geoms** inherit their mappings from the `ggplot()` function. 
+
+```{r}
+p <- ggplot(data = gapminder, 
+            mapping = aes(x = gdpPercap, 
+                          y=lifeExp))
+p + geom_point(mapping = aes(color = continent), alpha = 0.4) +
+    geom_smooth() +
+    scale_x_log10(labels = scales::dollar) +
+    labs(x = "GDP Per Capita", y = "Life Expectancy in Years",
+         title = "Economic Growth and Life Expectancy",
+         subtitle = "Data points are country-years",
+         caption = "Source: Gapminder.")
+```
+
+### 3.10 Color mapping population
+
+```{r}
+p <- ggplot(data = gapminder, 
+            mapping = aes(x = gdpPercap, 
+                          y=lifeExp))
+p + geom_point(mapping = aes(color = log(pop)), alpha = 1) +
+    geom_smooth(color = 'red') +
+    scale_x_log10(labels = scales::dollar) +
+    labs(x = "GDP Per Capita", y = "Life Expectancy in Years",
+         title = "Economic Growth and Life Expectancy",
+         subtitle = "Data points are country-years",
+         caption = "Source: Gapminder.")
+```
