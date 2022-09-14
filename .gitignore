@@ -22,3 +22,5 @@ venv.bak/
 # Scrapy stuff:
 .scrapy
 
+# Jupyter Notebook
+.ipynb_checkpoints
