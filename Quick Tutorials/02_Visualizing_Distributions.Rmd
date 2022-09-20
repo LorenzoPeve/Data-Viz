@@ -1,0 +1,48 @@
+---
+title: "Visualizing Distribution"
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+library(ggplot2)
+library(ggridges)
+opts_chunk$set(fig.align="center", fig.height=4, fig.width=5.5)
+```
+
+
+**Viz 1:** We will work with the `mpg` dataset provided by **ggplot2**. 
+
+See here for details: https://ggplot2.tidyverse.org/reference/mpg.html
+
+Make two different strip charts of highway fuel economy versus number of cylinders, the first one without horizontal jitter and second one with horizontal jitter. Explain in 1-2 sentences why the plot without jitter is highly misleading.
+
+Hint: Make sure you do not accidentally apply vertical jitter. This is a common mistake many people make.
+
+```{r}
+head(mpg)
+```
+```{r}
+
+print(unique(mpg$cyl))
+
+ggplot(mpg, aes(x = cyl, y = hwy)) +
+  geom_point(size = 0.75)  # reduce point size to minimize overplotting
+```
+
+
+*Your explanation goes here.*
+
+
+**Viz 2:** For this problem, we will continue working with the `mpg` dataset. Visualize the distribution of each car's city fuel economy by class and type of drive train with (i) boxplots and (ii) ridgelines. Make one plot per geom and do not use faceting. In both cases, put city mpg on the x axis and class on the y axis. Use color to indicate the car's drive train.
+
+The boxplot ggplot generates will have a problem. Explain what the problem is. (You do not have to solve it.)
+
+```{r}
+# Your code goes here.
+```
+
+*Your explanation goes here.*
+
+
+
+
