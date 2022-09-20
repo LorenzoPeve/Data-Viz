@@ -1,5 +1,5 @@
 ---
-title: "Visualizing Distribution 1"
+title: "Visualizing Distributions 1"
 output: github_document
 ---
 

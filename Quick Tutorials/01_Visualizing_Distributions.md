@@ -1,4 +1,4 @@
-Visualizing Distribution 1
+Visualizing Distributions 1
 ================
 
 In this notebook I will be working with the `chickwts` dataset built
