@@ -1,5 +1,6 @@
 ---
-title: "Visualizing Distribution"
+title: "Visualizing Distributions 2"
+output: github_document
 ---
 
 ```{r global_options, include=FALSE}
@@ -9,40 +10,108 @@ library(ggridges)
 opts_chunk$set(fig.align="center", fig.height=4, fig.width=5.5)
 ```
 
-
+## STRIP CHARTS
 **Viz 1:** We will work with the `mpg` dataset provided by **ggplot2**. 
 
 See here for details: https://ggplot2.tidyverse.org/reference/mpg.html
 
-Make two different strip charts of highway fuel economy versus number of cylinders, the first one without horizontal jitter and second one with horizontal jitter. Explain in 1-2 sentences why the plot without jitter is highly misleading.
-
-Hint: Make sure you do not accidentally apply vertical jitter. This is a common mistake many people make.
+Below are two different strip charts of highway fuel economy versus number of cylinders. 
+The first one without horizontal jitter and second one with horizontal jitter. 
 
 ```{r}
 head(mpg)
 ```
 ```{r}
-
-print(unique(mpg$cyl))
-
-ggplot(mpg, aes(x = cyl, y = hwy)) +
-  geom_point(size = 0.75)  # reduce point size to minimize overplotting
+summary(mpg$hwy)
 ```
 
 
-*Your explanation goes here.*
+```{r}
+
+print(unique(mpg$cyl))
+
+ggplot(mpg, aes(x = factor(cyl, level = c(4,5,6,8)), y = hwy)) +
+  geom_point(size = 1.5, color = 'firebrick') + 
+  labs(title = 'BAD - Strip charts with no jitter') + 
+  xlab('Number of cylinders') + 
+  scale_y_continuous(name = "Highway Fuel Economy (mpg)",
+                     limits = c(10, 45),
+                     breaks= seq(from = 10, to = 45, by = 5)) + 
+  theme_bw()
 
 
-**Viz 2:** For this problem, we will continue working with the `mpg` dataset. Visualize the distribution of each car's city fuel economy by class and type of drive train with (i) boxplots and (ii) ridgelines. Make one plot per geom and do not use faceting. In both cases, put city mpg on the x axis and class on the y axis. Use color to indicate the car's drive train.
+```
+
+
+```{r}
+
+ggplot(mpg, aes(x = factor(cyl, level = c(4,5,6,8)), y = hwy)) +
+  geom_point(size = 1.5, 
+             color = 'firebrick',
+             position = position_jitter(width = 0.15, height =0)) + 
+  labs(title = 'GOOD - Strip charts with horizontal jitter') + 
+  xlab('Number of cylinders') + 
+  scale_y_continuous(name = "Highway Fuel Economy (mpg)",
+                     limits = c(10, 45),
+                     breaks= seq(from = 10, to = 45, by = 5)) + 
+  theme_bw()
+
+
+```
+
+
+The plot without jitter is highly misleading because many points overlap, and we do not see the true number of data points contained in the dataset. We are misled into thinking there are fewer points, and we see a non-representative distribution of the data.
+
+## BOXPLOTS vs RIDGELINES CHARTS
+
+**Viz 2:** Visualize the distribution of each car's city fuel economy by class and type of drive train with (i) boxplots and (ii) ridgelines. In both cases, put city mpg on the x axis and class on the y axis. Use color to indicate the car's drive train.
 
 The boxplot ggplot generates will have a problem. Explain what the problem is. (You do not have to solve it.)
 
 ```{r}
-# Your code goes here.
+mpg
 ```
 
-*Your explanation goes here.*
+```{r}
+summary(mpg$cty)
+```
+```{r fig.height=10, fig.width=12}
+
+ggplot(mpg, aes(x = cty, y = class, fill = drv)) +
+  geom_boxplot(color = 'black') +
+  scale_x_continuous('City Fuel Consumption (mpg)', limits = c(5, 40),
+                     breaks= seq(from = 5, to = 40, by = 5)) +
+  ylab( "Vehicle Class") +
+  theme_bw()
+```
+```{r fig.height=10, fig.width=12}
+
+ggplot(mpg, aes(x = cty, y = class, fill = drv)) +
+  geom_density_ridges2(color = 'black', alpha = 0.7, scale = 0.95, 
+                       bandwidth = 0.9) +
+  scale_x_continuous('City Fuel Consumption (mpg)', limits = c(5, 40),
+                     breaks= seq(from = 5, to = 40, by = 5)) +
+  ylab( "Vehicle Class") +
+  theme_bw()
+```
+When using box-plots, we cannot see the underlying distribution of dots in each group. They make or give the impression that distributions are bell-shaped when instead, we cannot tell what the distribution is (it could be bimodal, for example), and we are misled. 
+
+Furthermore, in groups with few data points, depending on the values, we may or may not see the upper/lower fences, which only aids to confuse the audience.
+
+A better version of a box-plot chart is shown below. At least, it provides the data points, so the audience can see past the summary statistics.
+
+I would argue the same about the ridgeline plot. While they provide a better representation of the shape of the distribution, they would be better with the overlaying data points so we can see how many points are in each group. 
 
 
+```{r fig.height=10, fig.width=12}
 
-
+ggplot(mpg, aes(x = cty, y = class, fill = drv)) +
+  geom_boxplot(color = 'black', outlier.shape = NA) + 
+  geom_point(aes( color = drv, fill = drv),  shape = 22, size = 2, color = "black", 
+             position = position_jitter(height =0.2)) + 
+  scale_x_continuous('City Fuel Consumption (mpg)', limits = c(5, 40),
+                     breaks= seq(from = 5, to = 40, by = 5)) +
+  ylab( "Vehicle Class") +
+  labs(title = 'A better version of the boxplot including the data points') + 
+  theme_bw()
+```
