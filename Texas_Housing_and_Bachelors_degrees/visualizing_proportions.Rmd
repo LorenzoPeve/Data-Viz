@@ -1,0 +1,203 @@
+---
+title: "Visualizing Proportions"
+output: github_document
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+library(tidyverse)
+library(colorspace)
+library(cowplot)
+library(ggforce)
+
+```
+
+## **Problem 1: Bachelor’s degrees awarded in the US** 
+For this problem, we will work with the `BA_degrees` dataset. It contains the proportions of Bachelor’s degrees awarded in the US between 1970 and 2015.
+
+
+Plot a time series of the proportion of degrees (column `perc`) in this field over time, using facets to show each field. Also plot a straight line fit to the data for each field. You should modify the order of facets to maximize figure appearance and memorability. What do you observe?
+
+**Hint:** To get started, see slides 34 to 44 in the class on getting things into the right order: https://wilkelab.org/DSC385/slides/getting-things-in-order.html#34
+
+```{r message = FALSE}
+BA_degrees <- read_csv("https://wilkelab.org/SDS375/datasets/BA_degrees.csv")
+BA_degrees
+```
+
+
+
+### 1.1 Data Inspection
+
+See unique fields
+```{r}
+print(length(unique(BA_degrees$field)))
+for (p in unique(BA_degrees$field)) {
+  cat(p, "; ")
+}
+```
+
+```{r}
+print(summary(BA_degrees$year))
+print(unique(BA_degrees$year))
+```
+
+Check that fields add up to 1
+```{r}
+BA_degrees %>% 
+  group_by(year) %>%
+  summarize(total = sum(perc))
+```
+
+### 1.2 Time Series
+From the entire dataset, select a subset of 6 fields of study, using arbitrary criteria. 
+```{r}
+fields_of_interest <- c("Health professions and related programs", 
+                        "Liberal arts and sciences, general studies, and humanities", 
+                        "Computer and information sciences", 
+                        "Mathematics and statistics", 
+                        "Business",  
+                        "Engineering")
+
+field_names <- as_labeller(
+     c("Health professions and related programs" = 'Health & Related', 
+        "Liberal arts and sciences, general studies, and humanities" = 'Lib. Arts & Humm.', 
+        "Computer and information sciences" = "Computer & Info. Sciences",  
+        "Mathematics and statistics" = "Math & Stats", 
+        "Business" = "Business",  
+        "Engineering" = "Engineering"))
+
+
+BA_degrees_red <- BA_degrees %>% filter(field %in% fields_of_interest)
+```
+
+```{r}
+median_since_2010 = BA_degrees_red %>% 
+                        filter(year >= 2010) %>%
+                        group_by(field) %>%
+                        summarize(ave_perc = median(perc)) %>%
+                        arrange(desc(ave_perc))
+
+(median_since_2010$field)
+```
+```{r}
+# Create factor to help with later ordering
+median_since_2010 <- factor(BA_degrees_red$field, levels=median_since_2010$field)
+
+BA_degrees_red <- BA_degrees_red[order(median_since_2010),]
+```
+
+
+#### 1.2.1 Time Series with Bar Chart
+```{r, fig.width = 10}
+
+BA_degrees_red %>% 
+    mutate(field = fct_reorder(field, -perc)) %>% # default: order by median
+    ggplot(aes(x = year, y = perc)) + 
+    geom_col(fill = 'skyblue', color = 'black') + 
+    geom_line(aes(y = 0.05), color = "black", linetype = 4, size = 0.7) +
+    geom_smooth(method=lm, se=FALSE, col='red', size = 0.6 ) +
+    facet_wrap(vars(field), nrow = 2, ncol = 3, labeller = field_names) + 
+    scale_y_continuous(labels = scales::percent, "") + 
+    labs(title = 'Proportions of Bachelor’s degrees awarded in the US between 1970 and 2015') +
+    xlab("") +
+    theme_bw() 
+```
+
+
+#### 1.2.2 Time Series with Line Chart
+```{r, fig.width = 10}
+
+BA_degrees_red %>% 
+    mutate(field = fct_reorder(field, -perc)) %>% # default: order by median
+    ggplot(aes(x = year, y = perc)) + 
+    geom_line() + 
+    geom_point() +
+    geom_line(aes(y = 0.05), color = "black", linetype = 4, size = 0.7) +
+    geom_smooth(method=lm, se=FALSE, col='red', size = 0.6 ) +
+    facet_wrap(vars(field), nrow = 2, ncol = 3, labeller = field_names) + 
+    scale_y_continuous(labels = scales::percent, "") + 
+    labs(title = 'Proportions of Bachelor’s degrees awarded in the US between 1970 and 2015') +
+    xlab("") +
+    theme_bw() 
+```
+
+*Observations:*
+
+It is noted that the six degrees selected in the time series were arbitrarily chosen from the dataset to include majors of interest for the author of this notebook. Moreover, the degrees are ordered from left to right and top to bottom in decreasing order based on the median percentage values of degrees awarded between 2010 to 2015 (the latest available date).
+
+Among these 6 degrees, business degrees have consistently represented, since the 1970s, the largest proportion of degrees awarded in the US. 
+The proportion of business degrees has been about 20% since whereas the proportion for Lib. Arts & Humm, Computer & Info. Sciences and Math & Stats is about 2.5% or less. Health & Related degrees accounted for about 5% until 2001 and have risen considerably since then, reaching over 10% of the total degrees awarded. Engineering degrees have consistently represented about 5% of the total degrees awarded, and since 2005 its proportion has been almost constant.
+
+Linear regression models were fitted to each of the degrees selected. 
+
+* Business, Health & Related,  Lib. Arts & Humm, and Computer & Info. Sciences exhibit an increase in proportion while
+* Engineering and Math & Stats exhibit a negative trend in proportion between 1970-2015.
+
+The steepest slope (hence the largest rate of change) is for Health & Related degrees, which shows a significant increase in proportion since 2015.
+
+
+## **Problem 2: Texas Housing** 
+
+We will work the `txhousing` dataset provided by **ggplot2**. See here for details: https://ggplot2.tidyverse.org/reference/txhousing.html
+
+Consider the number of houses sold in January 2015. There are records for 46 different cities:
+
+```{r}
+txhousing_jan_2015 <- txhousing %>% 
+  filter(year == 2015 & month == 1) %>% 
+  arrange(desc(sales))
+
+head(txhousing_jan_2015)
+```
+
+
+
+Pie chart of the `txhousing_jan_2015` dataset, but showing only the four cities with the most sales, plus all others lumped together into "Other". 
+
+```{r}
+# data preparation
+top_four <- txhousing_jan_2015$sales[1:4]
+
+txhousing_lumped <- txhousing_jan_2015 %>%
+  mutate(city = ifelse(sales %in% top_four, city, "Other")) %>% 
+  group_by(city) %>%
+  summarize(sales = sum(sales))
+
+txhousing_lumped_for_pie <- 
+  txhousing_lumped %>%
+      arrange(sales) %>%
+      mutate(
+        end_angle = 2*pi*cumsum(sales)/sum(sales), #ending angle for each pie slice
+        start_angle = lag(end_angle, default =0), # starting angle for each pie slice
+        mid_angle = 0.5*(start_angle + end_angle), # middle of each pie slice, for text labels
+        
+        # Horizontal and Vertical justifications for outer labels
+        hjust = ifelse(mid_angle > pi, 1, 0),
+        vjust = ifelse(mid_angle < pi/2 | mid_angle > 3*pi/2, 0, 1)
+      )
+txhousing_lumped_for_pie
+```
+
+```{r}
+ggplot(txhousing_lumped_for_pie) + 
+  aes(x0 = 0, y0=0, r0=0, r =1,
+      start = start_angle, end = end_angle,
+      fill = city) + 
+  geom_arc_bar(show.legend = FALSE) +
+  geom_text(aes(x = 0.6 * sin(mid_angle),
+                y = 0.6 * cos(mid_angle),
+                label = sales)) + 
+  geom_text(aes(x = 1.05* sin(mid_angle),
+                y = 1.05* cos(mid_angle),
+                label = city,
+                hjust = hjust, 
+                vjust = vjust)) +
+  coord_fixed(xlim = c(-1.3, 1.3), ylim = c(-1.2, 1.2)) + 
+  labs(title = 'Texas Houses sales in 2015') +
+  scale_y_continuous(breaks = NULL, name="") + 
+  scale_x_continuous(breaks = NULL, name="") +
+  theme(panel.background = element_rect(fill = 'white', colour = NULL))
+
+```
+
