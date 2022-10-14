@@ -39,9 +39,9 @@ Is GPA related to student income, the father's educational level, or the student
 food <- food[c("GPA","income","father_education", "ideal_diet_coded")]
 colnames(food)
 ```
-####1.1 `GPA`
+#### 1.1 `GPA`
 
-Missing values encoded as "Unknown", "nan", or "Personal" where parsed as valid NAs at reading time. However, one more entry has an invalid string, which is handled below.
+Missing values encoded as `"Unknown"`, `"nan"`, or `"Personal"` where parsed as valid `NAs` at reading time. However, one more entry has an invalid string, which is handled below.
 
 ```{r }
 food$GPA <- sub(' bitch','',food$GPA)
@@ -49,42 +49,86 @@ food$GPA <- sub(' bitch','',food$GPA)
 
 Convert to numeric
 ```{r }
-food$GPA <- as.numeric(food$GPA )
+food$GPA <- as.numeric(food$GPA)
 ```
 
+Summary Stats
 ```{r }
 summary(food$GPA)
 ```
+#### 1.2 `income`
 
-
-```{r}
-str_detect(food$GPA, 'bitch')
-```
-```{r}
-str_detect(food$GPA, 'bitch')
-```
-
-
+Categories are re-coded following the data dictionary.
 
 ```{r }
-
-summary(food$income)
-sum(is.na(food$income))
-
+# Unique values
+sort(unique(food$income), na.last = TRUE)
 ```
 ```{r }
+food <- food %>%
+  mutate(
+    income = case_when(
+      income == 1 ~ "< 15,000",
+      income == 2 ~ "15,001 - 30,000",
+      income == 3 ~ "30,001 - 50,000",
+      income == 4 ~ "50,001 - 70,000",
+      income == 5 ~ "70,001 - 100,000",
+      income == 6 ~ "> 100,000"
+    )
+  )
+unique(food$income)
+table(food$income, useNA = "ifany")
+```   
+#### 1.3 `father_education`
 
-summary(food$father_education)
-sum(is.na(food$father_education))
+Categories are re-coded following the data dictionary.
 
+```{r }
+# Unique values
+sort(unique(food$father_education), na.last = TRUE)
+```
+```{r }
+food <- food %>%
+  mutate(
+    father_education = case_when(
+      father_education == 1 ~ "< High School",
+      father_education == 2 ~ "High School",
+      father_education == 3 ~ "Some College",
+      father_education == 4 ~ "College",
+      father_education == 5 ~ "Graduate",
+    )
+  )
+unique(food$father_education)
+table(food$father_education, useNA = "ifany")
+```   
+#### 1.4 `ideal_diet_coded`
+
+Categories are re-coded following the data dictionary.
+
+```{r }
+# Unique values
+sort(unique(food$ideal_diet_coded), na.last = TRUE)
 ```
 
 ```{r }
+food <- food %>%
+  mutate(
+    ideal_diet_coded = case_when(
+      ideal_diet_coded == 1 ~ "Portion control",
+      ideal_diet_coded == 2 ~ "Healthy w/ veg & fruit",
+      ideal_diet_coded == 3 ~ "Balanced",
+      ideal_diet_coded == 4 ~ "Less sugar",
+      ideal_diet_coded == 5 ~ "Home cooked/organic",
+      ideal_diet_coded == 6 ~ "Current Diet",
+      ideal_diet_coded == 7 ~ "More protein",
+      ideal_diet_coded == 8 ~ "Unclear",
+    )
+  )
+unique(food$ideal_diet_coded)
+table(food$ideal_diet_coded, useNA = "ifany")
+```   
 
-summary(food$ideal_diet_coded)
-sum(is.na(food$ideal_diet_coded))
 
-```
 ## **Discussion:**
 
 
