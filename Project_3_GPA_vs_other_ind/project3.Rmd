@@ -1,0 +1,90 @@
+---
+title: "Food choices"
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(colorspace)
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+This is the dataset we will be working with:
+
+```{r message = FALSE, warning = FALSE}
+food <- readr::read_csv(
+  "https://wilkelab.org/DSC385/datasets/food_coded.csv",
+  na = c("Unknown", "nan", "Personal"))
+food
+```
+
+A detailed data dictionary for this dataset is available [here.](https://wilkelab.org/DSC385/datasets/food_codebook.pdf) The dataset was originally downloaded from Kaggle, and you can find additional information about the dataset [here.](https://www.kaggle.com/borapajo/food-choices/version/5)
+
+
+## **Question:** 
+Is GPA related to student income, the father's educational level, or the student's perception of what an ideal diet is?
+
+
+## **Introduction:**
+
+
+## **Approach:** 
+
+
+## **Analysis:**
+
+
+### 1.0 Data Inspection
+```{r }
+# Get only the four columns of interest
+food <- food[c("GPA","income","father_education", "ideal_diet_coded")]
+colnames(food)
+```
+####1.1 `GPA`
+
+Missing values encoded as "Unknown", "nan", or "Personal" where parsed as valid NAs at reading time. However, one more entry has an invalid string, which is handled below.
+
+```{r }
+food$GPA <- sub(' bitch','',food$GPA)
+```
+
+Convert to numeric
+```{r }
+food$GPA <- as.numeric(food$GPA )
+```
+
+```{r }
+summary(food$GPA)
+```
+
+
+```{r}
+str_detect(food$GPA, 'bitch')
+```
+```{r}
+str_detect(food$GPA, 'bitch')
+```
+
+
+
+```{r }
+
+summary(food$income)
+sum(is.na(food$income))
+
+```
+```{r }
+
+summary(food$father_education)
+sum(is.na(food$father_education))
+
+```
+
+```{r }
+
+summary(food$ideal_diet_coded)
+sum(is.na(food$ideal_diet_coded))
+
+```
+## **Discussion:**
+
+
