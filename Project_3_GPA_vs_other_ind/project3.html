@@ -437,15 +437,19 @@ sort(unique(food$income), na.last = TRUE)</code></pre>
       income == 6 ~ &quot;&gt; 100,000&quot;
     )
   )
+food$income&lt;- fct_relevel(as.factor(food$income),
+                             &quot;&lt; 15,000&quot;, &quot;15,001 - 30,000&quot;, &quot;30,001 - 50,000&quot;,
+                             &quot;50,001 - 70,000&quot;, &quot;70,001 - 100,000&quot;,&quot;&gt; 100,000&quot;)
 unique(food$income)</code></pre>
-<pre><code>## [1] &quot;70,001 - 100,000&quot; &quot;50,001 - 70,000&quot;  &quot;&gt; 100,000&quot;        &quot;&lt; 15,000&quot;        
-## [5] &quot;30,001 - 50,000&quot;  &quot;15,001 - 30,000&quot;  NA</code></pre>
+<pre><code>## [1] 70,001 - 100,000 50,001 - 70,000  &gt; 100,000        &lt; 15,000        
+## [5] 30,001 - 50,000  15,001 - 30,000  &lt;NA&gt;            
+## 6 Levels: &lt; 15,000 15,001 - 30,000 30,001 - 50,000 ... &gt; 100,000</code></pre>
 <pre class="r"><code>table(food$income, useNA = &quot;ifany&quot;)</code></pre>
 <pre><code>## 
-##         &lt; 15,000        &gt; 100,000  15,001 - 30,000  30,001 - 50,000 
-##                6               41                7               17 
-##  50,001 - 70,000 70,001 - 100,000             &lt;NA&gt; 
-##               20               33                1</code></pre>
+##         &lt; 15,000  15,001 - 30,000  30,001 - 50,000  50,001 - 70,000 
+##                6                7               17               20 
+## 70,001 - 100,000        &gt; 100,000             &lt;NA&gt; 
+##               33               41                1</code></pre>
 </div>
 <div id="father_education" class="section level4">
 <h4>1.3 <code>father_education</code></h4>
@@ -463,13 +467,17 @@ sort(unique(food$father_education), na.last = TRUE)</code></pre>
       father_education == 5 ~ &quot;Graduate&quot;,
     )
   )
+food$father_education&lt;- fct_relevel(as.factor(food$father_education),
+                             &quot;&lt; High School&quot;, &quot;High School&quot;,&quot;Some College&quot;,
+                             &quot;College&quot;, &quot;Graduate&quot;)
 unique(food$father_education)</code></pre>
-<pre><code>## [1] &quot;Graduate&quot;      &quot;High School&quot;   &quot;College&quot;       &quot;&lt; High School&quot;
-## [5] &quot;Some College&quot;  NA</code></pre>
+<pre><code>## [1] Graduate      High School   College       &lt; High School Some College 
+## [6] &lt;NA&gt;         
+## Levels: &lt; High School High School Some College College Graduate</code></pre>
 <pre class="r"><code>table(food$father_education, useNA = &quot;ifany&quot;)</code></pre>
 <pre><code>## 
-## &lt; High School       College      Graduate   High School  Some College 
-##             4            46            28            34            12 
+## &lt; High School   High School  Some College       College      Graduate 
+##             4            34            12            46            28 
 ##          &lt;NA&gt; 
 ##             1</code></pre>
 </div>
