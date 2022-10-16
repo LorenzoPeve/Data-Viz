@@ -5,6 +5,7 @@ title: "Food choices"
 ```{r setup, include=FALSE}
 library(tidyverse)
 library(colorspace)
+library(ggforce)
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
@@ -26,6 +27,36 @@ Is GPA related to student income, the father's educational level, or the student
 
 ## **Introduction:**
 
+Introduction: We are working with a subset of the food choices and preferences of college students' dataset, which contains responses from 126  students of *Mercyhurst University* who agreed to participate in a survey. While the original dataset has 61 variables, this analysis focuses on four variables: (1) GPA, (2) student income, (3) the father's educational level, and (4) the student's perception of what an ideal diet is. 
+
+`GPA` is provided as a numeric value on a scale from 1.0 to 4.0 (unitless).
+
+`income` is encoded as a numeric variable with values of 1 to 6 as follows:
+
+* 1 -> less than $15,000
+* 2 -> $15,001 to $30,000
+* 3 -> $30,001 to $50,000
+* 4 -> $50,001 to $70,000
+* 5 -> $70,001 to $100,000
+* 6 -> higher than $100,000
+
+`father_education` is encoded as a numeric variable with values of 1 to 5 as follows:
+
+* 1 -> less than high school 
+* 2 -> high school degree
+* 3 -> some college degree
+* 4 -> college degree
+* 5 -> graduate degree
+
+The student's perception of what an ideal diet is `ideal_diet_coded`  is encoded as a numeric variable with values of 1 to 8 as follows:
+
+* 1 -> portion control
+* 2 -> adding veggies/eating healthier food/adding fruit 3 – balance
+* 4 -> less sugar
+* 5 -> home cooked/organic
+* 6 -> current diet
+* 7 -> more protein
+* 8 -> unclear
 
 ## **Approach:** 
 
@@ -68,17 +99,17 @@ sort(unique(food$income), na.last = TRUE)
 food <- food %>%
   mutate(
     income = case_when(
-      income == 1 ~ "< 15,000",
-      income == 2 ~ "15,001 - 30,000",
-      income == 3 ~ "30,001 - 50,000",
-      income == 4 ~ "50,001 - 70,000",
-      income == 5 ~ "70,001 - 100,000",
-      income == 6 ~ "> 100,000"
+      income == 1 ~ "< 15k",
+      income == 2 ~ "(15k - 30k]",
+      income == 3 ~ "(30k - 50k]",
+      income == 4 ~ "(50k - 70k]",
+      income == 5 ~ "(70k - 100k]",
+      income == 6 ~ "> 100k"
     )
   )
 food$income<- fct_relevel(as.factor(food$income),
-                             "< 15,000", "15,001 - 30,000", "30,001 - 50,000",
-                             "50,001 - 70,000", "70,001 - 100,000","> 100,000")
+                             "< 15k", "(15k - 30k]", "(30k - 50k]",
+                             "(50k - 70k]", "(70k - 100k]","> 100k")
 unique(food$income)
 table(food$income, useNA = "ifany")
 
@@ -134,8 +165,24 @@ food <- food %>%
 unique(food$ideal_diet_coded)
 table(food$ideal_diet_coded, useNA = "ifany")
 ```   
+### 2.0 Data Visualization
 
+#### 2.1 GPA vs Income
+```{r}
 
-## **Discussion:**
-
-
+food %>%
+  filter(!is.na(income)) %>%
+  
+  ggplot(aes(x = income, y = GPA)) + 
+  geom_violin(scale = "width", fill = 'skyblue') +  
+  geom_dotplot(binaxis='y', stackdir='center', dotsize=0.5) + 
+  stat_summary(
+              fun.data = "mean_cl_boot",
+              geom = "crossbar",
+              colour = "red", width = 0.3
+              ) +
+  scale_y_continuous('GPA',  breaks= seq(from = 1, to = 4, by = 0.5), limits = c(2,4)) +
+  labs(title = 'Students GPA versus Students income') + 
+  xlab('Income ($USD)') +
+  theme_bw()
+```
