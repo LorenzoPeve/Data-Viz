@@ -60,6 +60,18 @@ The student's perception of what an ideal diet is `ideal_diet_coded`  is encoded
 
 ## **Approach:** 
 
+The approach used for this analysis is to show the distributions of GPA versus the other explanatory variables using violin plots that include the data points and also summary statistics (25, 50, and 75% quartiles). 
+Violins make it easy to compare multiple distributions side-by-side. However, since they do not show the number of observations and the categories have distinct sample sizes, the data points are plotted with jittering for a more realistic representation of the data. Summary statistics are also added to allow for a quick comparison among the groups. 
+
+Boxplots alone were considered inadequate to provide a good representation of the data because of the distinct sample sizes in each group and the different variability among groups.
+
+Data preparation steps included:
+
+* Transformation of numeric codes to categorical values represented by humanly readable words or phrases (`income` and `father_education`).
+* Conversion of character strings into numerical values for `GPA` with some string manipulations to account for NA values.
+* Arrangement of categorical variables into "natural" order for `income` and `father_education`.
+
+Plots for `income` and `father_education`maintain the "inherent" or natural order of the variable whereas for the `ideal_diet_coded` the groups are arranged in decreasing average value from top to bottom.
 
 ## **Analysis:**
 
@@ -171,18 +183,67 @@ table(food$ideal_diet_coded, useNA = "ifany")
 ```{r}
 
 food %>%
-  filter(!is.na(income)) %>%
+  filter(!is.na(GPA), !is.na(income) ) %>%
   
   ggplot(aes(x = income, y = GPA)) + 
   geom_violin(scale = "width", fill = 'skyblue') +  
-  geom_dotplot(binaxis='y', stackdir='center', dotsize=0.5) + 
-  stat_summary(
-              fun.data = "mean_cl_boot",
-              geom = "crossbar",
-              colour = "red", width = 0.3
-              ) +
+  geom_dotplot(binaxis='y', stackdir='center', dotsize=0.5, binwidth = 0.075,  alpha = 0.3) + 
+  geom_boxplot(width=0.1, coef = 0, fill = NA, color = 'red', outlier.shape = NA) +
+  
+  # Aesthetics
   scale_y_continuous('GPA',  breaks= seq(from = 1, to = 4, by = 0.5), limits = c(2,4)) +
   labs(title = 'Students GPA versus Students income') + 
   xlab('Income ($USD)') +
   theme_bw()
+
 ```
+
+#### 2.2 GPA vs Father's education
+```{r}
+
+food %>%
+  filter(!is.na(GPA), !is.na(father_education) ) %>%
+  
+  ggplot(aes(x = father_education, y = GPA)) + 
+  geom_violin(scale = "width", fill = 'skyblue') +  
+  geom_dotplot(binaxis='y', stackdir='center', dotsize=0.5, binwidth = 0.075, alpha = 0.3) + 
+  geom_boxplot(width=0.1, coef = 0, fill = NA, color = 'red', outlier.shape = NA) +
+  
+  # Aesthetics
+  scale_y_continuous('GPA',  breaks= seq(from = 1, to = 4, by = 0.5), limits = c(2,4)) +
+  labs(title = "Students GPA versus Father's education") + 
+  xlab("Father's education") +
+  theme_bw()
+```
+
+#### 2.3 GPA vs Student's idea of an ideal diet
+
+```{r fig.height=6, fig.width=8}
+
+food %>%
+  filter(!is.na(GPA), !is.na(ideal_diet_coded) ) %>%
+	mutate(ideal_diet_coded = fct_reorder(ideal_diet_coded, GPA, median)) %>%
+
+  ggplot(aes(y = ideal_diet_coded, x = GPA)) + 
+  geom_violin(scale = "width", fill = 'skyblue') +
+  geom_boxplot(width=0.25, coef = 0, fill = NA, color = 'red', outlier.shape = NA) +
+  geom_point(size = 1.5, 
+             color = 'black', alpha = 0.4,
+             position = position_jitter(width = 0, height =0.15)) +
+  
+  # Aesthetics
+  scale_x_continuous('GPA',  breaks= seq(from = 1, to = 4, by = 0.5), limits = c(2,4)) +
+  labs(title = 'Students GPA versus Students "ideal" diet') + 
+  ylab('"Ideal" diet') +
+  theme_bw()
+```
+```{r}
+food %>% 
+  group_by(ideal_diet_coded) %>% 
+  summarize(avgGPA = median(GPA, na.rm = TRUE)) %>% 
+arrange(avgGPA)
+
+```
+
+## **Discussion:**
+
