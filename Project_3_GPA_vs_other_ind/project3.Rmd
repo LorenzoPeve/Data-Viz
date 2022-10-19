@@ -247,3 +247,23 @@ arrange(avgGPA)
 
 ## **Discussion:**
 
+*GPA and Income*
+
+Students' GPA seems to be independent of students income. There doesn't appear to be a trend in the data as the average GPA increases and decreases across the groups. For example, the average GPA for the 70k-100k group is lower than the 15k-30k and 50k-70k and the average GPA for the 30k-50k group is lower than the 15k-30k and <15k groups.
+Besides,  there is also no clear trend on how the variability changes as income changes. It is not possible to compare the variability between the two lowest and two largest income groups because of their differences in the sample sizes of 6 and 7 compared to 33, and 41, respectively.
+
+*GPA and Father's education*
+
+Students' average GPA seems to be independent of their father's education. In other words, there is no apparent trend as we move towards more educated fathers because the average GPA increases for students whose fathers have college degrees but then drops below 3.5 for students whose parents have graduate degrees. 
+The "Less than High School" category cannot be compared to the others because of the sample size of 4. 
+
+The variability in GPA is higher for students whose fathers have college and graduate degrees than for students whose fathers have either high school or some college degree.
+
+*GPA and Diet*
+
+Establishing relationships between GPA and the "ideal" diet for the surveyed students is challenging because of the subjectivity in the categories. What constitutes a healthy diet for some students could be not as healthy as they think without more metrics on the actual calories and their metrics. 
+
+However, the people claiming to have a diet with less sugar have the highest GPA and the smallest variability. Hence, we can state with some degree of confidence a low-sugar diet leads to better grades. 
+
+The sample size for the people who are unclear is only three, so not much can be inferred from it.
+
