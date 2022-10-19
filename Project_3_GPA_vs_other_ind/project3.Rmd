@@ -1,5 +1,6 @@
 ---
-title: "Food choices"
+title: "Students GPA against 3 explanatory variables"
+output: github_document
 ---
 
 ```{r setup, include=FALSE}
