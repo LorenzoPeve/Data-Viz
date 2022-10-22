@@ -44,13 +44,12 @@ student’s perception of what an ideal diet is?
 
 ## **Introduction:**
 
-Introduction: We are working with a subset of the food choices and
-preferences of college students’ dataset, which contains responses from
-126 students of *Mercyhurst University* who agreed to participate in a
-survey. While the original dataset has 61 variables, this analysis
-focuses on four variables: (1) GPA, (2) student income, (3) the father’s
-educational level, and (4) the student’s perception of what an ideal
-diet is.
+We are working with a subset of the food choices and preferences of
+college students’ dataset, which contains responses from 126 students of
+*Mercyhurst University* who agreed to participate in a survey. While the
+original dataset has 61 variables, this analysis focuses on four
+variables: (1) GPA, (2) student income, (3) the father’s educational
+level, and (4) the student’s perception of what an ideal diet is.
 
 `GPA` is provided as a numeric value on a scale from 1.0 to 4.0
 (unitless).
