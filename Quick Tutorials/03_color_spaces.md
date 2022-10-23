@@ -16,7 +16,7 @@ ggplot(penguins, aes(body_mass_g, bill_length_mm, color = species)) +
   theme_bw()
 ```
 
-![](color_spaces_files/figure-gfm/unnamed-chunk-1-1.png)<!-- -->
+![](03_color_spaces_files/figure-gfm/unnamed-chunk-1-1.png)<!-- -->
 
 ### 1.2 Specified Colors
 
@@ -39,7 +39,7 @@ ggplot(penguins, aes(body_mass_g, bill_length_mm, color = species)) +
   )
 ```
 
-![](color_spaces_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
+![](03_color_spaces_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
 
 # 2.0 Texas Income
 
@@ -60,7 +60,7 @@ ggplot(texas_income) +
     ## old-style crs object detected; please recreate object with a recent sf::st_crs()
     ## old-style crs object detected; please recreate object with a recent sf::st_crs()
 
-![](color_spaces_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+![](03_color_spaces_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
 
 ### 2.2 Using `viridis` scale
 
@@ -78,4 +78,4 @@ ggplot(texas_income) +
     ## old-style crs object detected; please recreate object with a recent sf::st_crs()
     ## old-style crs object detected; please recreate object with a recent sf::st_crs()
 
-![](color_spaces_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+![](03_color_spaces_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
