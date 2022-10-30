@@ -3,10 +3,11 @@ title: "Visualizing trends"
 output: github_document
 ---
 
+## Loading Data
+
 ```{r setup, include=FALSE}
 library(tidyverse)
 library(ggforce)
-knitr::opts_chunk$set(echo = FALSE, comment = "")
 
 blue_jays <- read_csv("https://wilkelab.org/SDS375/datasets/blue_jays.csv")
 biorxiv_growth <- read_csv("https://wilkelab.org/SDS375/datasets/preprints.csv") %>%
@@ -16,9 +17,12 @@ biorxiv_growth <- read_csv("https://wilkelab.org/SDS375/datasets/preprints.csv")
 cars93 <- read_csv("https://wilkelab.org/SDS375/datasets/cars93.csv")
 ```
 
+
+## 1.0 Fitting linear trend lines with `geom_smooth`
+
 ```{r}
 ggplot(blue_jays) +
-    aes(head_length_mm, body_mass_g) + 
+    aes(body_mass_g, head_length_mm) + 
     geom_point() +
     geom_smooth(method = 'lm'
                ) + 
@@ -27,10 +31,124 @@ ggplot(blue_jays) +
 
 ```{r}
 ggplot(blue_jays) +
-    aes(head_length_mm, body_mass_g) + 
+    aes(body_mass_g, head_length_mm) + 
     geom_point() +
     geom_smooth(method = 'lm',
                 se = FALSE) + 
   theme_bw()
 ```
-  
+
+```{r}
+ggplot(blue_jays) +
+    aes(body_mass_g, head_length_mm) + 
+    geom_point() +
+    geom_smooth(method = 'lm',
+                se = FALSE,
+                color = 'firebrick') + 
+  theme_bw()
+```
+```{r}
+ggplot(blue_jays) +
+    aes(x = body_mass_g,
+        y = head_length_mm, 
+        color = sex) + 
+    geom_point() +
+    geom_smooth(method = 'lm',
+                se = FALSE
+                ) + 
+  theme_bw()
+```
+
+```{r}
+ggplot(blue_jays) +
+    aes(x = body_mass_g,
+        y = head_length_mm) + 
+    geom_point() +
+    geom_smooth(method = 'lm',
+                se = FALSE
+                ) + 
+    facet_wrap(vars(sex))
+
+```
+
+
+## 2.0 Linear trend lines in log-transformed data
+
+
+### Data as-is
+```{r}
+ggplot(biorxiv_growth, aes(date_dec, count)) +
+  geom_point()
+```
+
+```{r}
+ggplot(biorxiv_growth, aes(date_dec, count)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  scale_y_log10()
+```
+
+### Creating a legend for the regression line
+
+The trick is that we need to set up a placeholder mapping, such as `aes(color = "original data")`. A mapping defined with `aes()` doesn’t always have to refer to a data column in the original data, it can also refer to a constant value provided with the mapping.
+
+
+```{r}
+ggplot(biorxiv_growth, aes(date_dec, count)) +
+  geom_point(aes(color = "original data")) +
+  geom_smooth(aes(color = "regression line"), method = "lm") +
+  scale_y_log10()
+```
+
+
+```{r}
+ggplot(biorxiv_growth, aes(date_dec, count)) +
+  geom_point(aes(color = "original data")) +
+  geom_smooth(aes(color = "regression line"), method = "lm") +
+  scale_y_log10() +
+    scale_color_manual(
+    name = NULL,
+    values = c("black", "firebrick4"),
+    guide = guide_legend(
+      override.aes = list(
+        linetype = c(0, 1),
+        shape = c(19, NA)
+      )
+    )
+  )
+```
+
+## 3.0 Smoothing lines
+
+```{r}
+ggplot(cars93, aes(Price, Fuel.tank.capacity)) +
+  geom_point() + 
+  geom_smooth()
+```
+
+### Adjusting `span`
+
+```{r}
+ggplot(cars93, aes(Price, Fuel.tank.capacity)) +
+  geom_point() + 
+  geom_smooth(
+    span = 0.2
+  )
+```
+
+```{r}
+ggplot(cars93, aes(Price, Fuel.tank.capacity)) +
+  geom_point() + 
+  geom_smooth(
+    span = 1.5
+  )
+```
+
+```{r}
+ggplot(cars93, aes(Price, Fuel.tank.capacity)) +
+  geom_point() + 
+  geom_smooth(
+    method = "gam",
+    formula = y ~ s(x, k = 3)
+  )
+```
