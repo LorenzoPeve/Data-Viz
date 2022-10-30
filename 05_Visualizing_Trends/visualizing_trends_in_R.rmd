@@ -4,7 +4,6 @@ output: github_document
 ---
 
 ```{r setup, include=FALSE}
-library(learnr)
 library(tidyverse)
 library(ggforce)
 knitr::opts_chunk$set(echo = FALSE, comment = "")
