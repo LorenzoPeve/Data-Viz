@@ -1,0 +1,37 @@
+---
+title: "Visualizing trends"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+library(learnr)
+library(tidyverse)
+library(ggforce)
+knitr::opts_chunk$set(echo = FALSE, comment = "")
+
+blue_jays <- read_csv("https://wilkelab.org/SDS375/datasets/blue_jays.csv")
+biorxiv_growth <- read_csv("https://wilkelab.org/SDS375/datasets/preprints.csv") %>%
+  filter(archive == "bioRxiv", count > 0) %>%
+  select(date_dec, count)
+
+cars93 <- read_csv("https://wilkelab.org/SDS375/datasets/cars93.csv")
+```
+
+```{r}
+ggplot(blue_jays) +
+    aes(head_length_mm, body_mass_g) + 
+    geom_point() +
+    geom_smooth(method = 'lm'
+               ) + 
+  theme_bw()
+```
+
+```{r}
+ggplot(blue_jays) +
+    aes(head_length_mm, body_mass_g) + 
+    geom_point() +
+    geom_smooth(method = 'lm',
+                se = FALSE) + 
+  theme_bw()
+```
+  
