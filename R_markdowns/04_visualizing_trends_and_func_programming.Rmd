@@ -68,6 +68,7 @@ ggplot(carnivores, aes(x = bodywt, y = sleep_total)) +
   annotation_logticks(sides = 'b')
 
 ```
+
 **Discussion**
 
 The data suggest that large carnivores sleep less than small ones. A whale is recorded as sleeping 2.7 hours and having a body weight of 800 kilograms, whereas a domestic cat is recorded as sleeping 12.5 hours for a weight of 3.3 kilograms.
@@ -128,6 +129,7 @@ make_vore_plot(msleep, "carni")
 map2(list(msleep, msleep, msleep, msleep), c("carni", "herbi", "insecti", "omni"), make_vore_plot)
 
 ```
+
 **Discussion**
 
 The data suggest that large mammals sleep less than small ones for all vore types. There is a stronger correlation between sleep and body weight for carnivores and herbivores.

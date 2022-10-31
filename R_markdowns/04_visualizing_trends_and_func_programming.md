@@ -90,6 +90,7 @@ ggplot(carnivores, aes(x = bodywt, y = sleep_total)) +
     ## `geom_smooth()` using formula 'y ~ x'
 
 <img src="04_visualizing_trends_and_func_programming_files/figure-gfm/unnamed-chunk-7-1.png" style="display: block; margin: auto;" />
+
 **Discussion**
 
 The data suggest that large carnivores sleep less than small ones. A
@@ -185,6 +186,7 @@ map2(list(msleep, msleep, msleep, msleep), c("carni", "herbi", "insecti", "omni"
     ## `geom_smooth()` using formula 'y ~ x'
 
 <img src="04_visualizing_trends_and_func_programming_files/figure-gfm/unnamed-chunk-10-4.png" style="display: block; margin: auto;" />
+
 **Discussion**
 
 The data suggest that large mammals sleep less than small ones for all
