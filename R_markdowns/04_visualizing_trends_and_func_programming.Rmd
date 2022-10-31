@@ -1,0 +1,137 @@
+---
+title: "Mammals Sleep and Body Weight"
+output: github_document
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+library(tidyverse)
+library(broom)
+library(glue)
+library(cowplot)
+opts_chunk$set(fig.align="center", fig.height=4, fig.width=5.5)
+```
+
+## Data Loading and Inspection
+
+The `msleep` dataset, provided by **ggplot2**, is used. See here for details: https://ggplot2.tidyverse.org/reference/msleep.html
+
+```{r message = FALSE}
+data <- msleep
+head(data)
+```
+Columns in data set
+```{r}
+names(data)
+```
+## 1.0 Sleep annd Body Weight for *carnivores*
+
+Visualize the relationship between total amount of sleep and body weight in each mammal classified as a carnivore (`vore == "carni"`). 
+
+
+```{r}
+table(data$vore, useNA = "ifany")
+```
+
+```{r}
+carnivores <- data %>%
+  filter(vore == "carni")
+```
+
+#### 1.1 `sleep_total`
+```{r}
+summary(carnivores$sleep_total)
+```
+
+#### 1.2 `bodywt`
+```{r}
+summary(carnivores$bodywt)
+
+```
+
+```{r}
+
+ggplot(carnivores, aes(x = bodywt, y = sleep_total)) +
+  geom_point() +
+  geom_smooth(method = 'lm', color = 'firebrick') +
+  theme_bw() +
+  xlab('Body Weight (kg)') +
+  scale_y_continuous(
+    'Hours of Sleep',
+    breaks= seq(from = 0, to = 24, by = 4), 
+    limits = c(0,24),
+    expand = expansion(mult = c(0, 0.06))) + 
+  scale_x_log10(
+           breaks = scales::trans_breaks("log10", function(x) 10^x),
+           labels = scales::trans_format("log10", scales::math_format(10^.x))) +
+  labs(title = glue("Sleep versus Body Weight for carnivores")) +
+  annotation_logticks(sides = 'b')
+
+```
+**Discussion**
+
+The data suggest that large carnivores sleep less than small ones. A whale is recorded as sleeping 2.7 hours and having a body weight of 800 kilograms, whereas a domestic cat is recorded as sleeping 12.5 hours for a weight of 3.3 kilograms.
+
+## 2.0 Automating Plot Creation
+Creating a function to generate a plot for the other mammals
+
+```{r}
+summary(data$bodywt)
+```
+```{r}
+
+make_vore_plot <- function(data, vore) {
+  
+  # This is a workaround for "insecti" whose band is above 24 hrs.
+  if (vore == 'insecti') {
+    yrange = NULL
+    } else {
+    yrange = c(0, 24)
+    }
+
+  # Data Filtering
+  data %>%
+      filter(.data$vore == .env$vore) %>%
+      filter(!is.na(.data$sleep_total), !is.na(.data$bodywt)) %>%
+    
+      # Plotting
+      ggplot( aes(x = bodywt, y = sleep_total)) +
+        geom_point(na.rm = FALSE) +
+        geom_smooth(
+            method = 'lm', 
+            color = 'firebrick',
+            na.rm = FALSE) +
+        theme_bw() +
+        xlab('Body Weight (kg)') +
+        scale_y_continuous(
+            'Hours of Sleep',
+            breaks= seq(from = 0, to = 24, by = 4),
+            limits = yrange,
+            expand = expansion(mult = c(0, 0.06))) +
+ 
+        scale_x_log10(
+           breaks = scales::trans_breaks("log10", function(x) 10^x),
+           labels = scales::trans_format("log10", scales::math_format(10^.x))) +
+        labs(title = glue("Sleep versus Body Weight for {vore}vores")) +
+        annotation_logticks(sides = 'b')
+  
+}
+
+make_vore_plot(msleep, "carni")
+
+```
+
+## 3.0 Sleep and Body Weight for all mammals
+
+```{r}
+
+map2(list(msleep, msleep, msleep, msleep), c("carni", "herbi", "insecti", "omni"), make_vore_plot)
+
+```
+**Discussion**
+
+The data suggest that large mammals sleep less than small ones for all vore types. There is a stronger correlation between sleep and body weight for carnivores and herbivores.
+Carnivores tend to sleep more than herbivores. Upon further research, a factor that affects how much animal sleeps is whether the animal is a hunter or is hunted. Predators (carnivores) such as lions and tigers get plenty of sleep; they have little to fear. But animals that are prey, such as deer, tend to get less sleep. They need to remain alert and aware of nearby predators. The dataset supports that finding.
+
+Insectivores show a relatively flat linear trend, and the sample size is rather small to draw conclusions.
+Omnivores, which still follow the general trend of larger weight leading to less sleep, interestingly exhibit the largest values of sleep for medium size, around 1 kilogram.
